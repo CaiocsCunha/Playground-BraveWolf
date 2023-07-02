@@ -2,15 +2,11 @@ import { api, LightningElement, track } from 'lwc';
 
 export default class CarrinhoCompras extends LightningElement {
   
-  @api itensPedidoList;
+  @api pedido;
 
   @api
   cancelarPedido(){
-    this.itensPedidoList = [];
-  }
-
-  get itensPedido(){
-    return this.itensPedidoList;
+    this.pedido = [];
   }
 
   retornar(){
@@ -19,8 +15,6 @@ export default class CarrinhoCompras extends LightningElement {
   }
 
   excluirItem(event){
-    let pedidoAposExclusao = this.itensPedidoList.filter( item => item.idProduto != event.target.dataset.id);
-    this.itensPedidoList = pedidoAposExclusao;
     const eventExcluirItem = new CustomEvent('excluiritem',{
       detail: event.target.dataset.id
     });

@@ -38,10 +38,12 @@ export default class CriarPedidos extends LightningElement {
     }
   }
 
-  pedido = {
-    idTabela: undefined,
-    itens: [],
-    idConta: undefined
+  @track carrinhoComprasProps = {
+    pedido : {
+      idTabela: undefined,
+      itens: [],
+      idConta: undefined
+    }
   }
 
   connectedCallback(){
@@ -51,7 +53,8 @@ export default class CriarPedidos extends LightningElement {
 
   renderedCallback(){
     if(this.quantidadeItens != undefined){
-      this.template.querySelector('[data-id="cartIcon"]').dataset.count = this.quantidadeItens;
+    //this.refs substitui o template.querySelector, podendo acessar de forma mais direta pelo lwc:ref
+     this.refs.cartIcon.dataset.count = this.quantidadeItens;
     }
   }
 
@@ -66,9 +69,9 @@ export default class CriarPedidos extends LightningElement {
 
   clearAll(){
     this.produtosList = [];
-    this.pedido.itens = [];
-    this.pedido.idConta = undefined;
-    this.pedido.idTabela = undefined;
+    this.carrinhoComprasProps.pedido.itens = [];
+    this.carrinhoComprasProps.pedido.idConta = undefined;
+    this.carrinhoComprasProps.pedido.idTabela = undefined;
     this.quantidadeItens = 0;
     this.produtoSelecionado = undefined;
     this.isShowCarrinho = false;
@@ -113,7 +116,7 @@ export default class CriarPedidos extends LightningElement {
 
   adicionarProduto(){
     if(this.quantity > 0){
-      let produto = this.pedido.itens.filter(produto => produto.idProduto == this.produtoSelecionado.Product2Id);
+      let produto = this.carrinhoComprasProps.pedido.itens.filter(produto => produto.idProduto == this.produtoSelecionado.Product2Id);
       if(this.produtoSelecionado != undefined && produto.length == 0){
         let itemPedido = {
           idProduto: undefined,
@@ -125,15 +128,15 @@ export default class CriarPedidos extends LightningElement {
         itemPedido.quantidade = this.quantity;
         itemPedido.nome = this.produtoSelecionado.Name;
         itemPedido.preco = this.produtoSelecionado.UnitPrice;
-        this.pedido.itens.push(itemPedido);
-        this.quantidadeItens = this.pedido.itens.length;
-        this.template.querySelector('[data-id="cartIcon"]').dataset.count = this.quantidadeItens;
+        this.carrinhoComprasProps.pedido.itens.push(itemPedido);
+        this.quantidadeItens = this.carrinhoComprasProps.pedido.itens.length;
+        this.refs.cartIcon.dataset.count = this.quantidadeItens;
         this.showToast('success','Sucesso', this.labels.alertas.sucesso.itemAdcionado, 'dismissable');
       }else if(this.produtoSelecionado != undefined && produto.length != 0 && produto[0].quantidade != this.quantity && produto[0].quantidade < this.quantity){
         produto[0].quantidade = this.quantity;
-        let listaFiltrada = this.pedido.itens.filter(produto => produto.idProduto != this.produtoSelecionado.Product2Id);
+        let listaFiltrada = this.carrinhoComprasProps.pedido.itens.filter(produto => produto.idProduto != this.produtoSelecionado.Product2Id);
         listaFiltrada.push(produto[0]);
-        this.pedido.itens = listaFiltrada;
+        this.carrinhoComprasProps.pedido.itens = listaFiltrada;
         this.showToast('success','Sucesso',this.labels.alertas.sucesso.itemAtualizado, 'dismissable');
       } else if(this.produtoSelecionado != undefined && produto.length != 0 && produto[0].quantidade == this.quantity) {
         this.showToast('warning','Aviso',this.labels.alertas.aviso.semEdicao, 'dismissable');
@@ -149,8 +152,8 @@ export default class CriarPedidos extends LightningElement {
   }
 
   criarPedido(){
-    if(this.pedido.idConta != undefined && this.pedido.idTabela != undefined && this.pedido.itens.length != 0){
-      let pedidoToCreate = Object.assign({},this.pedido)
+    if(this.carrinhoComprasProps.pedido.idConta != undefined && this.carrinhoComprasProps.pedido.idTabela != undefined && this.carrinhoComprasProps.pedido.itens.length != 0){
+      let pedidoToCreate = Object.assign({},this.carrinhoComprasProps.pedido)
       criarPedidoCls({pedido : pedidoToCreate})
       .then(result => {
         this.showToast('success','Sucesso',this.labels.alertas.sucesso.pedidoGerado, 'dismissable');
@@ -165,19 +168,19 @@ export default class CriarPedidos extends LightningElement {
   }
 
   excluirItem(event){
-    let pedidoAposExclusao = this.pedido.itens.filter( item => item.idProduto != event.detail);
-    this.pedido.itens = pedidoAposExclusao;
-    this.quantidadeItens = this.pedido.itens.length;    
+    let pedidoAposExclusao = this.carrinhoComprasProps.pedido.itens.filter( item => item.idProduto != event.detail);
+    this.carrinhoComprasProps.pedido.itens = pedidoAposExclusao;
+    this.quantidadeItens = this.carrinhoComprasProps.pedido.itens.length; 
   }
 
   returnToOrder(){
     this.isShowCarrinho = false;
     this.isModalOpen = true;
-    if(this.pedido.idConta != undefined){
-      this.valueConta = this.pedido.idConta;
+    if(this.carrinhoComprasProps.pedido.idConta != undefined){
+      this.valueConta = this.carrinhoComprasProps.pedido.idConta;
     }
-    if(this.pedido.idTabela != undefined){
-      this.valueTabela = this.pedido.idTabela;
+    if(this.carrinhoComprasProps.pedido.idTabela != undefined){
+      this.valueTabela = this.carrinhoComprasProps.pedido.idTabela;
     }
   }
 
@@ -187,7 +190,7 @@ export default class CriarPedidos extends LightningElement {
   }
 
   setAccount(event){
-    this.pedido.idConta = event.detail.value;
+    this.carrinhoComprasProps.pedido.idConta = event.detail.value;
   }
 
   handleCatalogo(event) {
@@ -196,14 +199,14 @@ export default class CriarPedidos extends LightningElement {
       
     }, 2000);
     this.buscarItensTabela(event.detail.value);
-    this.pedido.idTabela = event.detail.value;
+    this.carrinhoComprasProps.pedido.idTabela = event.detail.value;
 
   }
 
   showResumo(event){
     this.isShowResumo = true;
     this.produtoSelecionado = event.detail;
-    let buscaItemNoCarrinho = this.pedido.itens.filter(item => item.idProduto == this.produtoSelecionado.Product2Id);
+    let buscaItemNoCarrinho = this.carrinhoComprasProps.pedido.itens.filter(item => item.idProduto == this.produtoSelecionado.Product2Id);
     if(buscaItemNoCarrinho.length > 0){
       this.quantity = buscaItemNoCarrinho[0].quantidade;
     } else {

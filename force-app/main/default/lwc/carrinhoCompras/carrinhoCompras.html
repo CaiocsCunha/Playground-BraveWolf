@@ -10,7 +10,7 @@
             <th>Quantidade</th>
           </thead>
           <tbody>
-            <template for:each={itensPedido} for:item="itemPedido">
+            <template for:each={pedido.itens} for:item="itemPedido">
               <tr key={itemPedido.idProduto}>
                 <td>{itemPedido.nome}</td>
                 <td>{itemPedido.preco}</td>
