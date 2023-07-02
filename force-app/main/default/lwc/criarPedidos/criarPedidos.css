@@ -1,0 +1,17 @@
+button.cartIcon::before {
+  content: attr(data-count);
+  height: 25px;
+  width: 25px;
+  background-color: green;
+  border-radius: 50%;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  scale: 0.8;
+  position: absolute;
+  right: -0.5em;
+  bottom: -0.5em;
+}

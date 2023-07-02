@@ -1,0 +1,32 @@
+<template>
+  <section style="width: 800px;" class="slds-modal slds-fade-in-open slds-align_absolute-center">
+    <div style="width: 800px;"> 
+      <div id="produtos" class="slds-modal__content slds-p-around_medium slds-col">
+        <h1 class="slds-text-title">Seu carrinho</h1>
+        <table>
+          <thead>
+            <th>Nome produto</th>
+            <th>Preço</th>
+            <th>Quantidade</th>
+          </thead>
+          <tbody>
+            <template for:each={itensPedido} for:item="itemPedido">
+              <tr key={itemPedido.idProduto}>
+                <td>{itemPedido.nome}</td>
+                <td>{itemPedido.preco}</td>
+                <td>{itemPedido.quantidade}</td>
+                <td><lightning-button-icon data-id={itemPedido.idProduto} icon-name="utility:delete"  alternative-text="delete" title="delete" onclick={excluirItem}  variant='brand'></lightning-button-icon></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+
+      <footer class="slds-modal__footer slds-text-align_center">
+        <button class="slds-button slds-button_brand" onclick={retornar} title="OK">Voltar</button>
+      </footer>
+  
+    </div>
+  </section>
+  <div class="slds-backdrop slds-backdrop_open"></div>  
+</template>
